@@ -1,9 +1,72 @@
-﻿#Define the output .csv file path
-$csvFilePath = "C:\Temp\AutoPilot_device_export.csv"
-$snPath = "C:\Temp\SerialNumbers.txt"
+﻿#Created by Bastiaan Geijtenbeek, please use and adapt to your own liking.
+#Script fetches registered AutoPilot Device information, pretty much how the export function within Intune actually works, only with more information this time..
+#
+#
+#Parameter settings for modular installation down the line
+#Remember, to be able to connect to MsGraph you will need the following modules installed:
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
 
-#Connect to MS Graph
-Connect-MgGraph -NoWelcome
+
+param(
+     [Parameter()]
+     [string]$inputFile,
+
+     [Parameter()]
+     [string]$outputFile,
+
+     [Parameter()]
+     [switch]$DesktopShortcut,
+
+     [Parameter()]
+     [switch]$UserContext,
+
+     [Parameter()]
+     [switch]$log
+ )
+
+#Set dateStamp variable
+$dateStamp = Get-Date -Format "yyyyMMddHHmm"
+
+#If log parameter was called, write log to
+if ($log.IsPresent){
+    Start-Transcript -Path "C:\Temp\AutoPilot-Device-Export-$dateStamp.log" -Force
+}
+
+#If inputFile has been added to install parameter
+if ($inputFile.IsPresent){
+    $snPath = $inputFile
+    Write-Host "Imported file $snPath for specific device serial numbers"
+
+    if ($outputFile.IsPresent){
+        $csvFilePath = $outputFile
+        Write-Host "Outputfile (custom): $csvFilePath"
+    }
+    else (){
+        $csvFilePath = "C:\Temp\AutoPilot-Device-Export-$dateStamp.csv"
+        Write-Host "Outputfile (default): $csvFilePath"
+    }
+
+    #Connect to MsGraph
+    Connect-MgGraph -NoWelcome
+
+}
+
+#When no inputFile has been added to install parameter, get them all
+else {
+
+}
+
+
 
 
 #Get the serial numbers from the text file and loop through them
