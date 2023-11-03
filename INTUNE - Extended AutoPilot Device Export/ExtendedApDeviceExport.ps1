@@ -6,16 +6,6 @@
 #Remember, to be able to connect to MsGraph you will need the following modules installed:
 #
 #
-#
-#
-#
-#
-#
-#
-#
-#
-#
-
 
 param(
      [Parameter()]
@@ -25,71 +15,120 @@ param(
      [string]$outputFile,
 
      [Parameter()]
-     [switch]$DesktopShortcut,
-
-     [Parameter()]
-     [switch]$UserContext,
-
-     [Parameter()]
-     [switch]$log
+     [switch]$Log
  )
 
 #Set dateStamp variable
 $dateStamp = Get-Date -Format "yyyyMMddHHmm"
-
 #If log parameter was called, write log to
-if ($log.IsPresent){
+if ($Log.IsPresent){
     Start-Transcript -Path "C:\Temp\AutoPilot-Device-Export-$dateStamp.log" -Force
 }
 
-#If inputFile has been added to install parameter
-if ($inputFile.IsPresent){
-    $snPath = $inputFile
-    Write-Host "Imported file $snPath for specific device serial numbers"
+try {
+    #If inputFile has been added to install parameter
+    if ($inputFile.IsPresent){
+        $snPath = $inputFile
+        Write-Host "Imported file $snPath for specific device serial numbers"
 
-    if ($outputFile.IsPresent){
-        $csvFilePath = $outputFile
-        Write-Host "Outputfile (custom): $csvFilePath"
+        #Set Custom outputfile or else set default path & name.
+        if ($outputFile.IsPresent){
+            $csvFilePath = $outputFile
+            Write-Host "Outputfile (custom): $csvFilePath"
+        }
+        else (){
+            $csvFilePath = "C:\Temp\AutoPilot-Device-Export-$dateStamp.csv"
+            Write-Host "Outputfile (default): $csvFilePath"
+        }
+
+        #Connect to MsGraph
+        Write-Host "Connecting to MsGraph.."
+        Connect-MgGraph -NoWelcome
+        
+        #Get the serial numbers from the text file and loop through them
+        $SerialNumbers = Get-Content -Path $snPath
+
+        foreach ($Serial in $SerialNumbers) {
+            $device = Get-AutopilotDevice -serial $Serial
+            $serialNumber = $device.serialnumber
+            $manufacturer = $device.manufacturer
+            $systemFamily = $device.systemFamily
+            $model = $device.model
+            $enrollmentState = $device.enrollmentState
+            $deviceName = $device.displayName
+            $groupTag = $device.GroupTag
+            $userAssignment = $device.userPrincipalName
+
+            # Create a custom object for the current data
+            $rowData = [PSCustomObject]@{
+                SerialNumber = $serialNumber
+                Manufacturer = $manufacturer
+                SystemFamily = $systemFamily
+                Model = $model    
+                EnrollmentState = $enrollmentState
+                DeviceName = $deviceName
+                GroupTag = $groupTag
+                UserAssigned = $userAssignment
+            }
+
+            # Append the data to the .csv file
+            $rowData | Export-Csv -Path $csvFilePath -Append -NoTypeInformation
+            Write-Host "S/N $serialNumber information added to csv.."
+        }
     }
-    else (){
-        $csvFilePath = "C:\Temp\AutoPilot-Device-Export-$dateStamp.csv"
-        Write-Host "Outputfile (default): $csvFilePath"
+
+    #When no inputFile has been added to install parameter, get them all
+    else {
+        #Set Custom outputfile or else set default path & name.
+        if ($outputFile.IsPresent){
+            $csvFilePath = $outputFile
+            Write-Host "Outputfile (custom): $csvFilePath"
+        }
+        else (){
+            $csvFilePath = "C:\Temp\AutoPilot-Device-Export-$dateStamp.csv"
+            Write-Host "Outputfile (default): $csvFilePath"
+        }
+
+        #Connect to MsGraph
+        Write-Host "Connecting to MsGraph.."
+        Connect-MgGraph -NoWelcome
+
+        $devices = Get-AutopilotDevice
+
+        foreach ($device in $devices) {
+            $serialNumber = $device.serialnumber
+            $manufacturer = $device.manufacturer
+            $systemFamily = $device.systemFamily
+            $model = $device.model
+            $enrollmentState = $device.enrollmentState
+            $deviceName = $device.displayName
+            $groupTag = $device.GroupTag
+            $userAssignment = $device.userPrincipalName
+
+            # Create a custom object for the current data
+            $rowData = [PSCustomObject]@{
+                SerialNumber = $serialNumber
+                Manufacturer = $manufacturer
+                SystemFamily = $systemFamily
+                Model = $model    
+                EnrollmentState = $enrollmentState
+                DeviceName = $deviceName
+                GroupTag = $groupTag
+                UserAssigned = $userAssignment
+            }
+
+            # Append the data to the .csv file
+            $rowData | Export-Csv -Path $csvFilePath -Append -NoTypeInformation
+            Write-Host "S/N $serialNumber information added to csv.."
+        }
     }
-
-    #Connect to MsGraph
-    Connect-MgGraph -NoWelcome
-
 }
 
-#When no inputFile has been added to install parameter, get them all
-else {
-
+catch {
+    Write-Error $_
 }
 
-
-
-
-#Get the serial numbers from the text file and loop through them
-$SerialNumbers = Get-Content -Path $snPath
-
-foreach ($Serial in $SerialNumbers) {
-    $device = Get-AutopilotDevice -serial $Serial
-    $serialNumber = $device.serialnumber
-    $enrollmentState = $device.enrollmentState
-    $displayName = $device.displayName
-    $groupTag = $device.GroupTag
-    $userAssignment = $device.userPrincipalName
-
-    # Create a custom object for the current data
-    $rowData = [PSCustomObject]@{
-        SerialNumber = $serialNumber
-        EnrollmentState = $enrollmentState
-        DisplayName = $displayName
-        GroupTag = $groupTag
-        UserAssigned = $userAssignment
-    }
-    # Append the data to the .csv file
-    $rowData | Export-Csv -Path $csvFilePath -Append -NoTypeInformation
-    Write-Host "S/N $serialNumber added to csv..."
+if ($Log.IsPresent) {
+    Write-Host "End of script, exiting.."
+    Stop-Transcript
 }
-Write-Host "END OF SCRIPT!"
