@@ -36,7 +36,7 @@ try {
             $csvFilePath = $outputFile
             Write-Host "Outputfile (custom): $csvFilePath"
         }
-        else (){
+        else {
             $csvFilePath = "C:\Temp\AutoPilot-Device-Export-$dateStamp.csv"
             Write-Host "Outputfile (default): $csvFilePath"
         }
@@ -84,7 +84,7 @@ try {
             $csvFilePath = $outputFile
             Write-Host "Outputfile (custom): $csvFilePath"
         }
-        else (){
+        else {
             $csvFilePath = "C:\Temp\AutoPilot-Device-Export-$dateStamp.csv"
             Write-Host "Outputfile (default): $csvFilePath"
         }
