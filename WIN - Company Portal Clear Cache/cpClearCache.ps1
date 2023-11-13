@@ -4,7 +4,7 @@
 .PARAMETER <Log>
 Switch that, when added to installation command, will write a log/transcript of the process.
 .OUTPUTS
-Log file (.log) - will write the transcript of the script to C:\Temp\AutoPilot-Device-Export-$dateStamp.log (when Log parameter is used)
+Log file (.log) - will write the transcript of the script to C:\Temp\CompanyPortal-ClearCache-$dateStamp.log (when Log parameter is used)
 .NOTES
   Version:        1.0
   Author:         bgeijtenbeek
@@ -17,7 +17,10 @@ Log file (.log) - will write the transcript of the script to C:\Temp\AutoPilot-D
 
 param(
      [Parameter()]
-     [switch]$Log
+     [switch]$Log,
+
+     [Parameter()]
+     [switch]$Silent
  )
 
 #Set dateStamp variable
@@ -143,10 +146,13 @@ Try {
     Start-Sleep -s 6
     Write-Host "7: IntuneManagementExtension Service started."
 
-    #Show popup that script is done
-    Write-Host "8: Script finished, showing popup."
-    $wshell = New-Object -ComObject Wscript.Shell
-    $wshell.Popup("The operation was completed. Please restart the Company Portal app, click the gear-icon on the bottom left, scroll down and then click 'Sync'",0,"Company Portal - ClearCache",0x0)
+    if (!($Silent.IsPresent)){
+        #Show popup that script is done
+        Write-Host "8: Script finished, showing popup."
+        $wshell = New-Object -ComObject Wscript.Shell
+        $wshell.Popup("The operation was completed. Please restart the Company Portal app, click the gear-icon on the bottom left, scroll down and then click 'Sync'",0,"Company Portal - ClearCache",0x0)
+    }
+    
 }
 
 Catch {
