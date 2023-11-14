@@ -1,7 +1,10 @@
 <#
 .DESCRIPTION
- Script empties the Company Portal "cache" (regkeys, staging folders, etc) thereby resetting GRS and forcing Company Portal to do a fresh sync. Helps when required apps are not coming through because of GRS.
+ Script empties the Company Portal or IME "cache" (regkeys, staging folders, etc) thereby resetting GRS and forcing Company Portal / IME to do a fresh sync. 
+ Helps when required apps are not coming through because of GRS.
 .PARAMETER <Log>
+Switch that, when added to installation command, will write a log/transcript of the process.
+.PARAMETER <Silent>
 Switch that, when added to installation command, will write a log/transcript of the process.
 .OUTPUTS
 Log file (.log) - will write the transcript of the script to C:\Temp\CompanyPortal-ClearCache-$dateStamp.log (when Log parameter is used)
@@ -12,7 +15,7 @@ Log file (.log) - will write the transcript of the script to C:\Temp\CompanyPort
   Purpose/Change: Required apps sometime take a long to to install after sync. This is (partly) because of the cache. Emtpying helps required apps to install gaian sooner/quicker.
 
 .EXAMPLE
-.\cpClearCache.ps1 -Log
+.\cpClearCache.ps1 -Log -Silent
 #>
 
 param(
