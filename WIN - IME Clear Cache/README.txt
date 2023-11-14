@@ -14,10 +14,10 @@ The script:
 - Restarts the IntuneManagementExtension service.
 
 There are 2 switches that can be used in conjunction with this script:
--Log : Writes a transcript of the process to C:\Temp\ScriptLogs\CompanyPortal-ClearCache-<datestamp>.log
+-Log : Writes a transcript of the process to C:\Temp\ScriptLogs\IME-ClearCache-<datestamp>.log
 -Silent : This will disable a windows popup that usually shows when the script is finished. Ideal for remote usage.
 
 Examples:
-.\cpClearCache.ps1
-.\cpClearCache.ps1 -Log -Silent
+.\imeClearCache.ps1
+.\imeClearCache.ps1 -Log -Silent
 
