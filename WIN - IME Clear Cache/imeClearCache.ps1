@@ -7,7 +7,7 @@ Switch that, when added to installation command, will write a log/transcript of 
 .PARAMETER <Silent>
 Switch that, when added to installation command, will write a log/transcript of the process.
 .OUTPUTS
-Log file (.log) - will write the transcript of the script to C:\Temp\CompanyPortal-ClearCache-$dateStamp.log (when Log parameter is used)
+Log file (.log) - will write the transcript of the script to C:\Temp\IME-ClearCache-$dateStamp.log (when Log parameter is used)
 .NOTES
   Version:        1.0
   Author:         bgeijtenbeek
@@ -15,7 +15,7 @@ Log file (.log) - will write the transcript of the script to C:\Temp\CompanyPort
   Purpose/Change: Required apps sometime take a long to to install after sync. This is (partly) because of the cache. Emtpying helps required apps to install gaian sooner/quicker.
 
 .EXAMPLE
-.\cpClearCache.ps1 -Log -Silent
+.\imeClearCache.ps1 -Log -Silent
 #>
 
 param(
@@ -30,7 +30,7 @@ param(
 $dateStamp = Get-Date -Format "yyyyMMddHHmm"
 #If log parameter was called, write log to
 if ($Log.IsPresent){
-    Start-Transcript -Path "C:\Temp\ScriptLogs\CompanyPortal-ClearCache-$dateStamp.log" -Force
+    Start-Transcript -Path "C:\Temp\ScriptLogs\IME-ClearCache-$dateStamp.log" -Force
 }
 
 Try {
@@ -153,7 +153,7 @@ Try {
         #Show popup that script is done
         Write-Host "8: Script finished, showing popup."
         $wshell = New-Object -ComObject Wscript.Shell
-        $wshell.Popup("The operation was completed. Please restart the Company Portal app, click the gear-icon on the bottom left, scroll down and then click 'Sync'",0,"Company Portal - ClearCache",0x0)
+        $wshell.Popup("The operation was completed. Please attempt another synchronization to fetch the latest data/apps/scripts from Intune.",0,"IntuneManagementExtension - ClearCache",0x0)
     }
     
 }
