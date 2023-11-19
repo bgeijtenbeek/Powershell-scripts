@@ -11,7 +11,8 @@ This script requires some powershell modules but installs them as well when they
     Install-Module -Name Az -AllowClobber -Force
     Install-Module AzTable -Force
 
-Also, make sure you have an Azure Table ready to go and hardcode the following variables down in step 2 of the script (You can also use the custom install parameters to pre-fill them from the command line if you would like!):
+Also, make sure you have an Azure Table ready to go. 
+Hardcode the following variables down in step 2 of the script or use the custom install parameters to pre-fill them from the command line if you would like:
 
     $StorageAccountName = ""
     $TableName = ""
