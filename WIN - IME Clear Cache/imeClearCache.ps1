@@ -7,7 +7,7 @@ Switch that, when added to installation command, will write a log/transcript of 
 .PARAMETER <Silent>
 Switch that, when added to installation command, prevent a popup message at the end of the script.
 .OUTPUTS
-Log file (.log) - will write the transcript of the script to C:\Temp\ScriptLogs\IME-ClearCache-$dateStamp.log (when Log parameter is used)
+Log file (.log) - will write the transcript of the script to C:\Temp\ScriptLogs\IME-ClearCache-$dateStamp.log (when Log parameter is used).
 .NOTES
   Version:        1.0
   Author:         bgeijtenbeek
