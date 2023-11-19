@@ -5,17 +5,26 @@
 Switch that, when added to installation command, will write a log/transcript of the process.
 .OUTPUTS
 Export file (Azure Table)
-Log file (.log) - will write the transcript of the script to C:\Temp\Get-BitLockerStatus_ToAzureTable_$dateStamp.txt (when Log parameter is used)
+Log file (.txt) - will write the transcript of the script to C:\Temp\Get-BitLockerStatus_ToAzureTable_$dateStamp.txt (when Log parameter is used)
 .NOTES
   Version:        1.0
   Author:         bgeijtenbeek
-  Creation Date:  18-Nov-2023
+  Creation Date:  19-Nov-2023
   Purpose/Change: Export Local Bitlocker Data to Azure Table
-  Prerequisites: Installed powershell modules (will install through script when not installed yet):
+  Prerequisites:  Installed powershell modules (will install through script when not installed yet):
 
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
     Install-Module -Name Az -AllowClobber -Force
     Install-Module AzTable -Force
+
+Also, make sure you have an Azure Table ready to go and fill out the following variables down in step 2 of the script:
+
+    $StorageAccountName = ""
+    $TableName = ""
+    $StorageAccountKey = ""
+
+Must be run with admin privileges.
+
 .EXAMPLE
 .\Get-BitlockerStatusAndExportToAzureTable.ps1
 .\Get-BitlockerStatusAndExportToAzureTable.ps1 -Log
@@ -36,11 +45,8 @@ if ($Log.IsPresent) {
 try {
     
     # 1. Check if required Powershell modules are installed (required). If not, install, otherwise nothing
-    if (!(Get-PackageProvider -Name Nuget -ErrorAction SilentlyContinue)) {
-        Write-Host "NuGet Package Provider not found, installing.."
-        Install-PackageProvider -Name NuGet -Force
-    }
-    else { Write-Host "NuGet Package Provider already installed."}  
+    Write-Host "NuGet Package Provider not found, installing.."
+    Install-PackageProvider -Name NuGet -Force
 
     if (!(Get-Module -ListAvailable -Name Az.Storage -ErrorAction SilentlyContinue)) {
         Write-Host "Az Module not found, installing.."
@@ -56,9 +62,9 @@ try {
 
     # 2. Define variables for connection
     Write-Host "Defining variables..." 
-    $StorageAccountName = "bitlockercollector"
-    $TableName = "BitlockerCollection"
-    $StorageAccountKey = "DTC3RJAPR2vJ5lz5C1+mETiI3dsTTXk6LAY3UHdWGftDjxM9Cjp8CAh7SmV30NqphrhwOpraLjys+AStEe1WsA=="
+    $StorageAccountName = ""
+    $TableName = ""
+    $StorageAccountKey = ""
     $PartitionKey = "BitlockerData"
 
     # 3. Create a new Azure Storage context
