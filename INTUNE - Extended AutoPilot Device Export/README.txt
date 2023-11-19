@@ -17,16 +17,12 @@ You can install & import them via these commands:
     Import-Module Microsoft.Graph.Authentication
     Import-Module Microsoft.Graph.Identity.DirectoryManagement
 
-The script writes the output to "C:\Temp\AutoPilot-Device-Export-$dateStamp.csv".
-It can be customized using the -outputFile parameter.
+The script contains 1 string parameter and 1 switch parameter:
+-outputFile : contains a custom .csv export path. Default (when parameter is not used) path is "C:\Temp\AutoPilot-Device-Export-$dateStamp.csv"
+-Log : Switch parameter, when used will create a transcript of the process to "C:\Temp\ScriptLogs\AutoPilot-Device-Export-$dateStamp.log".
 
-It als contains the option to import a .txt file with a pre-selection of serialnumbers to only look for these devices.
-Create a .txt file with serial numbers (one-per-line) and target it with the script -inputFile parameter.
-
-You can turn on logging by calling the -Log switch parameter. 
-It will write the transcript to "C:\Temp\AutoPilot-Device-Export-$dateStamp.log".
 
 Examples:
 .\ExtendedApDeviceExport.ps1
-.\ExtendedApDeviceExport.ps1 -inputFile 'C:\location\to\inputfile.txt' -outputFile 'C:\location\to\exportfile.csv' -Log
+.\ExtendedApDeviceExport.ps1 -Log -outputFile 'C:\location\to\exportfile.csv'
 
