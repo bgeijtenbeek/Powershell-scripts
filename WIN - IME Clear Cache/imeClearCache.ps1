@@ -1,13 +1,13 @@
 <#
 .DESCRIPTION
- Script empties the Company Portal or IME "cache" (regkeys, staging folders, etc) thereby resetting GRS and forcing Company Portal / IME to do a fresh sync. 
- Helps when required apps are not coming through because of GRS.
+Script empties the Company Portal or IME "cache" (regkeys, staging folders, etc) thereby resetting GRS and forcing Company Portal / IME to do a fresh sync. 
+Helps when required apps are not coming through because of GRS.
 .PARAMETER <Log>
 Switch that, when added to installation command, will write a log/transcript of the process.
 .PARAMETER <Silent>
-Switch that, when added to installation command, will write a log/transcript of the process.
+Switch that, when added to installation command, prevent a popup message at the end of the script.
 .OUTPUTS
-Log file (.log) - will write the transcript of the script to C:\Temp\IME-ClearCache-$dateStamp.log (when Log parameter is used)
+Log file (.log) - will write the transcript of the script to C:\Temp\ScriptLogs\IME-ClearCache-$dateStamp.log (when Log parameter is used)
 .NOTES
   Version:        1.0
   Author:         bgeijtenbeek

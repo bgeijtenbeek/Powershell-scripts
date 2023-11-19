@@ -1,11 +1,17 @@
 ﻿<#
 .DESCRIPTION
- Script collects local BitLocker Data and exports/appends it into an Azure Storage Table.
+Script collects local BitLocker Data and exports/appends it into an Azure Storage Table.
+.PARAMETER <SAN>
+Prefill your Storage Account Name via the -SAN string parameter.
+.PARAMETER <TN>
+Prefill your Table Name via the -TN string parameter.
+.PARAMETER <SAK>
+Prefill your Storage Account Key via the -SAK string parameter.
 .PARAMETER <Log>
 Switch that, when added to installation command, will write a log/transcript of the process.
 .OUTPUTS
 Export file (Azure Table)
-Log file (.txt) - will write the transcript of the script to C:\Temp\Get-BitLockerStatus_ToAzureTable_$dateStamp.txt (when Log parameter is used)
+Log file (.txt) - will write the transcript of the script to C:\Temp\ScriptLogs\BitLockerStatus_ToAzureTable_$dateStamp.log (when Log parameter is used)
 .NOTES
   Version:        1.0
   Author:         bgeijtenbeek
@@ -17,7 +23,7 @@ Log file (.txt) - will write the transcript of the script to C:\Temp\Get-BitLock
     Install-Module -Name Az -AllowClobber -Force
     Install-Module AzTable -Force
 
-Also, make sure you have an Azure Table ready to go and fill out the following variables down in step 2 of the script:
+Also, make sure you have an Azure Table ready to go. Use the install parameters to enter the required Azure connection details or hardcode them down in step 2 of the script:
 
     $StorageAccountName = ""
     $TableName = ""
@@ -28,23 +34,37 @@ Must be run with admin privileges.
 .EXAMPLE
 .\Get-BitlockerStatusAndExportToAzureTable.ps1
 .\Get-BitlockerStatusAndExportToAzureTable.ps1 -Log
+.\Get-BitlockerStatusAndExportToAzureTable.ps1 -Log -SAN "<yourstorageaccountname>" -TN "<yourtablename>" -SAK "<yourstorageaccountkey>"
 #>
 
 param(
-     [Parameter()]
-     [switch]$Log
+
+    [Parameter()]
+    [string]$SAN,
+
+    [Parameter()]
+    [string]$TN,
+
+    [Parameter()]
+    [string]$SAK,
+
+    [Parameter()]
+    [switch]$Log
  )
 
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
-$dateStamp = Get-Date -Format "yyyyMMdd_HHmm"
+$dateStamp = Get-Date -Format "yyyyMMddHHmm"
 
 if ($Log.IsPresent) {
-    Start-Transcript -Path "C:\Temp\Get-BitLockerStatus_ToAzureTable_$dateStamp.txt" -NoClobber
+    Start-Transcript -Path "C:\Temp\ScriptLogs\BitLockerStatus_ToAzureTable_$dateStamp.log" -NoClobber
 }
 
 try {
     
-    # 1. Check if required Powershell modules are installed (required). If not, install, otherwise nothing
+    #####################################################################
+    # 1. Check if required Powershell modules are installed (required). 
+    # If not, install, otherwise nothing
+    #####################################################################
     Write-Host "NuGet Package Provider not found, installing.."
     Install-PackageProvider -Name NuGet -Force
 
@@ -60,19 +80,71 @@ try {
     } 
     else { Write-Host "AzTable Module already installed."}  
 
+    #################################################
     # 2. Define variables for connection
+    #################################################
     Write-Host "Defining variables..." 
-    $StorageAccountName = ""
-    $TableName = ""
-    $StorageAccountKey = ""
+
+    #if Storage Account Name variable is already assigned through parameter
+    if ($SAN) {
+        $StorageAccountName = $SAN
+    }
+    #when not using the parameter, set variable (hardcode) here.
+    else {
+        $StorageAccountName = ""
+    }
+
+    #if Table Name variable is already assigned through parameter
+    if ($TN) {
+        $TableName = $TN
+    }
+    #when not using the parameter, set variable (hardcode) here.
+    else {
+        $TableName = ""
+    }
+    
+    #if Storage Account Key variable is already assigned through parameter
+    if ($SAK) {
+        $StorageAccountKey = $SAK
+    }
+    #when not using the parameter, set variable (hardcode) here.
+    else {
+        $StorageAccountKey = ""
+    }
+
     $PartitionKey = "BitlockerData"
 
+    #check if variables are present, otherwise exit script
+    if(!($StorageAccountName)) {
+        $exitError = "yes"
+        Write-Host "Error: Storage Account Name variable is NULL."
+    }
+    if(!($TableName)) {
+        $exitError = "yes"
+        Write-Host "Error: Table Name variable is NULL."
+    }
+    if(!($StorageAccountKey)) {
+        $exitError = "yes"
+        Write-Host "Error: Storage Account Key variable is NULL."
+    }
+    if ($exitError) {
+        Write-Host "Do not have all the connection details for making the Azure Table connection. Exiting.."
+        if ($Log.IsPresent){
+            Stop-Transcript
+        }
+        Exit 1
+    }
+
+    #############################################
     # 3. Create a new Azure Storage context
+    #############################################
     Write-Host "Creating Azure Storage context..."
     $Context = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $StorageAccountKey
     $Table = (Get-AZStorageTable -Name $TableName -Context $Context).CloudTable
 
-    # 4. Fetch Data
+    ##############################
+    # 4. Fetch Data / Manipulate
+    ##############################
     $hostName = hostname
 
     #Get info for Drive C: (if exists)
@@ -80,8 +152,6 @@ try {
     $BitlockerStatus = manage-bde -status c:
     if (!($BitlockerStatus | findstr "ERROR:")) {
     
-        # 5. Manipulate data 
-
         #Get raw seperate info
         $VolumeInfoRaw = "Volume: C:\" 
         $VolumeSizeRaw = $BitlockerStatus | findstr "Size"
@@ -114,7 +184,7 @@ try {
         #$LockStatus = ($LockStatusRaw.Replace("Lock Status: ", "").TRIM())
         #$KeyProtectors = ($KeyProtectorsRaw.Replace("Key Protectors: ", "").TRIM())
 
-        # 6. Write info to database
+        #Write info to database
         Write-Host "Writing information to Azure Table database..."
         Add-AzTableRow `
             -table $Table `
@@ -131,8 +201,6 @@ try {
     $BitlockerStatus = manage-bde -status d:
     if (!($BitlockerStatus | findstr "ERROR:")) {
     
-        # 5. Manipulate data 
-
         #Get raw seperate info
         $VolumeInfoRaw = "Volume: D:\" 
         $VolumeSizeRaw = $BitlockerStatus | findstr "Size"
@@ -165,7 +233,7 @@ try {
         #$LockStatus = ($LockStatusRaw.Replace("Lock Status: ", "").TRIM())
         #$KeyProtectors = ($KeyProtectorsRaw.Replace("Key Protectors: ", "").TRIM())
 
-        # 6. Write info to database
+        #Write info to database
         Write-Host "Writing information to Azure Table database..."
         Add-AzTableRow `
             -table $Table `
@@ -182,8 +250,6 @@ try {
     $BitlockerStatus = manage-bde -status e:
     if (!($BitlockerStatus | findstr "ERROR:")) {
     
-        # 5. Manipulate data 
-
         #Get raw seperate info
         $VolumeInfoRaw = "Volume: E:\" 
         $VolumeSizeRaw = $BitlockerStatus | findstr "Size"
@@ -216,7 +282,7 @@ try {
         #$LockStatus = ($LockStatusRaw.Replace("Lock Status: ", "").TRIM())
         #$KeyProtectors = ($KeyProtectorsRaw.Replace("Key Protectors: ", "").TRIM())
 
-        # 6. Write info to database
+        #Write info to database
         Write-Host "Writing information to Azure Table database..."
         Add-AzTableRow `
             -table $Table `

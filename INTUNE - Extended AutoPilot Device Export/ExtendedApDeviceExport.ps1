@@ -1,6 +1,6 @@
 ﻿<#
 .DESCRIPTION
- Script connects to MsGraph and then fetches all registered AutoPilot Device info (more than the default export function from within Intune). It then writes it to a .csv file.
+Script connects to MsGraph and then fetches all registered AutoPilot Device info (more than the default export function from within Intune). It then writes it to a .csv file.
 .PARAMETER <inputfile>
 When used, this parameter will allow you to import a .txt file containing pre-selected serial numbers. Should contain the entire path & filename.
 .PARAMETER <outputfile>
@@ -17,7 +17,7 @@ Log file (.log) - will write the transcript of the script to C:\Temp\AutoPilot-D
   Author:         bgeijtenbeek
   Creation Date:  04-Nov-2023
   Purpose/Change: Regular export from Intune doesn't contain all the information I require such as groupTag, AssignedUser, etc.
-  Prerequisites: Installed powershell modules:
+  Prerequisites:  Installed powershell modules:
 
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
     Install-Module WindowsAutopilotIntune -MinimumVersion 5.4.0 -Force
@@ -32,7 +32,8 @@ Log file (.log) - will write the transcript of the script to C:\Temp\AutoPilot-D
 
 .EXAMPLE
 .\ExtendedApDeviceExport.ps1
-.\ExtendedApDeviceExport.ps1 -inputFile 'C:\location\to\inputfile.txt' -outputFile 'C:\location\to\exportfile.csv' -Log
+.\ExtendedApDeviceExport.ps1 -Log
+.\ExtendedApDeviceExport.ps1 -Log -inputFile 'C:\location\to\inputfile.txt' -outputFile 'C:\location\to\exportfile.csv'
 #>
 
 param(
@@ -50,7 +51,7 @@ param(
 $dateStamp = Get-Date -Format "yyyyMMddHHmm"
 #If log parameter was called, write log to
 if ($Log.IsPresent){
-    Start-Transcript -Path "C:\Temp\AutoPilot-Device-Export-$dateStamp.log" -Force
+    Start-Transcript -Path "C:\Temp\ScriptLogs\AutoPilot-Device-Export-$dateStamp.log" -Force
 }
 
 try {
