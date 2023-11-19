@@ -2,7 +2,7 @@
 Usage info
 ###################
 
-Script clears the Company Portal / IntuneManagementExtension cache. This can be useful in cases where installfiles get stuck in the staging phase or when a required app is in GRS mode (not responding to sync so no way of "forcing" the installer to run again). When resyncing after the script is run it will do so with a blank slate.
+Script clears the Company Portal / IntuneManagementExtension cache. This can be useful in cases where installfiles get stuck in the staging phase or when a required app is in GRS mode (not responding to sync so no way of "forcing" the installer to run again). When resyncing after the script is run it will force Intune to do the detection from a clean-slate perspective.
 
 This script requires no preinstalled modules and it needs to be run by an admin account.
 
