@@ -25,7 +25,7 @@ There are 3 string parameters and 1 switch that can be used in conjunction with 
 -SAK : String parameter, contains the Storage Account Key (for the Azure Table)
 -Log : Switch parameter, writes a transcript of the process to C:\Temp\ScriptLogs\BitLockerStatus_ToAzureTable_$dateStamp.log
 
-The script must be run with admin privileges.
+The script must be run with Admin privileges!
 
 Examples:
 .\Get-BitlockerStatusAndExportToAzureTable.ps1
