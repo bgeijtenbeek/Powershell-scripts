@@ -155,13 +155,27 @@ Try {
         $wshell = New-Object -ComObject Wscript.Shell
         $wshell.Popup("The operation was completed. Please attempt another synchronization to fetch the latest data/apps/scripts from Intune.",0,"IntuneManagementExtension - ClearCache",0x0)
     }
-    
+    Write-Host "End of Script. Catch & exit."
 }
 
 Catch {
-    Write-Error $_
+    $ErrorText = "Error: $($_.Exception.Message)"
+    Write-Host $ErrorText
 }
 
-if ($Log.IsPresent){
-    Stop-Transcript
+# Exit the script or take other appropriate action
+if (!($ErrorText)) {
+    Write-Host "Exit code 0: No Error detetcted."
+    if ($Log.IsPresent){
+        Stop-Transcript
+    }
+    Exit 0
 }
+else {
+    Write-Host "Exit code 1: Error detetcted."
+    if ($Log.IsPresent){
+        Stop-Transcript
+    }
+    exit 1
+}
+
