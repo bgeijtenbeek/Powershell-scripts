@@ -15,7 +15,7 @@ Log file (.txt) - will write the transcript of the script to C:\Temp\ScriptLogs\
 .NOTES
   Version:        1.0
   Author:         bgeijtenbeek
-  Creation Date:  19-Nov-2023
+  Creation Date:  18-Nov-2023
   Purpose/Change: Export Local Bitlocker Data to Azure Table
   Prerequisites:  Installed powershell modules (will install through script when not installed yet):
 
