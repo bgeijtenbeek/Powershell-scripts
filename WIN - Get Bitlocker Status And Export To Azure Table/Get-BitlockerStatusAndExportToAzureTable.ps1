@@ -65,7 +65,6 @@ try {
     # 1. Check if required Powershell modules are installed (required). 
     # If not, install, otherwise nothing
     #####################################################################
-    Write-Host "NuGet Package Provider not found, installing.."
     Install-PackageProvider -Name NuGet -Force
 
     if (!(Get-Module -ListAvailable -Name Az.Storage -ErrorAction SilentlyContinue)) {
@@ -302,14 +301,14 @@ catch {
 
 # Exit the script or take other appropriate action
 if (!($ErrorText)) {
-    Write-Host "Exit code 0: No Error detetcted."
+    Write-Host "Exit code 0: No Error detected."
     if ($Log.IsPresent) {
         Stop-Transcript
     }
     Exit 0
 }
 else {
-    Write-Host "Exit code 1: Error detetcted."
+    Write-Host "Exit code 1: Error detected."
     if ($Log.IsPresent) {
         Stop-Transcript
     }
