@@ -18,7 +18,7 @@ The script:
 - Deletes all the regkeys that contain the run status of scripts
 - Restarts the IntuneManagementExtension service.
 
-There are 2 switches that can be used in conjunction with this script:
+There are 5 switches that can be used in conjunction with this script:
 -Log : Writes a transcript of the process to C:\Temp\ScriptLogs\IME-ClearCache-<datestamp>.log
 -Silent : This will disable a windows popup that usually shows when the script is finished. Ideal for remote usage.
 -All : Will select both apps & script statuses to be purged
